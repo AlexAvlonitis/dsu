@@ -9,6 +9,10 @@ import (
 	"time"
 )
 
+const (
+	layoutDate = "1-2-06"
+)
+
 // Prepare to create a note file with a date
 func add_note(reader bufio.Reader) {
 	for {
@@ -25,7 +29,8 @@ func add_note(reader bufio.Reader) {
 			note, _ := reader.ReadString('\n')
 			// convert CRLF to LF
 			note = strings.Replace(note, "\n", "", -1)
-			add(note, time.Now())
+			currentTime := time.Now()
+			add(note, currentTime.Format(layoutDate))
 		}
 
 		if strings.Compare("q", text) == 0 {
@@ -47,13 +52,14 @@ func show_add_note_menu() {
 
 // Add a note, creates a filename with the given date as a name
 // and it is stored under the logs folder
-func add(note string, t time.Time) {
+func add(note string, time string) {
 	usr, err := user.Current()
 	check(err)
-	filepath := fmt.Sprintf("%s/dsu_logs/%s", usr.HomeDir, t.Format(layoutDate))
 
+	filepath := fmt.Sprintf("%s/dsu_logs/%s", usr.HomeDir, time)
 	f, err := os.OpenFile(filepath, os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0600)
 	check(err)
+
 	defer f.Close()
 
 	_, err = f.WriteString("• " + note + "\n")

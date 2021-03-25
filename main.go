@@ -7,10 +7,6 @@ import (
 	"strings"
 )
 
-const (
-	layoutDate = "1_Jan_2006"
-)
-
 func main() {
 	reader := bufio.NewReader(os.Stdin)
 
