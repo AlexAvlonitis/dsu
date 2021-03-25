@@ -9,28 +9,22 @@ import (
 	"time"
 )
 
-const (
-	layoutDate = "1-2-06"
-)
-
 // Prepare to create a note file with a date
 func add_note(reader bufio.Reader) {
 	for {
 		create_home_dir_logs_storage()
 		show_add_note_menu()
 
-		fmt.Print("[Add note]-> ")
-		text, _ := reader.ReadString('\n')
-		// convert CRLF to LF
-		text = strings.Replace(text, "\n", "", -1)
+		fmt.Print("-> ")
+		text := getInput(reader)
 
 		if strings.Compare("1", text) == 0 {
 			fmt.Print(Warn("[Add note +]-> "))
-			note, _ := reader.ReadString('\n')
-			// convert CRLF to LF
-			note = strings.Replace(note, "\n", "", -1)
+			note := getInput(reader)
+
 			currentTime := time.Now()
-			add(note, currentTime.Format(layoutDate))
+			formattedTime := currentTime.Format(layoutDate)
+			add(note, formattedTime)
 		}
 
 		if strings.Compare("q", text) == 0 {
@@ -65,21 +59,11 @@ func add(note string, time string) {
 	_, err = f.WriteString("• " + note + "\n")
 	check(err)
 
-	fmt.Printf("\nAdded: %s\n", note)
 	f.Sync()
+	readNote(time)
 }
 
 // Create a folder that holds all the logs in the home directory
 func create_home_dir_logs_storage() {
-	usr, err := user.Current()
-	check(err)
-
-	destinationDir := usr.HomeDir + "/dsu_logs"
-	_ = os.Mkdir(destinationDir, 0700)
-}
-
-func check(e error) {
-	if e != nil {
-		panic(e)
-	}
+	os.Mkdir(logPath(), 0700)
 }
