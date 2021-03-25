@@ -18,7 +18,15 @@ func add_note(reader bufio.Reader) {
 		text := getInput(reader)
 
 		if strings.Compare("1", text) == 0 {
-			add(reader)
+			currentTime := time.Now()
+			time := currentTime.Format(layoutDate)
+			add(time, reader)
+		}
+
+		if strings.Compare("2", text) == 0 {
+			fmt.Print("Enter date (yy-mm-dd) ->")
+			text := getInput(reader)
+			add(text, reader)
 		}
 
 		if strings.Compare("q", text) == 0 {
@@ -40,12 +48,10 @@ func show_add_note_menu() {
 
 // Add a note, creates a filename with the given date as a name
 // and it is stored under the logs folder
-func add(reader bufio.Reader) {
+func add(time string, reader bufio.Reader) {
 	fmt.Print(Warn("[Add note +]-> "))
 	note := getInput(reader)
 
-	currentTime := time.Now()
-	time := currentTime.Format(layoutDate)
 	filepath := fmt.Sprintf(logPath() + "/" + time)
 	f, err := os.OpenFile(filepath, os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0600)
 	check(err)

@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"io/ioutil"
+	"sort"
 	"strings"
 )
 
@@ -16,7 +17,10 @@ func fetch_note(reader bufio.Reader) {
 		text := getInput(reader)
 
 		if strings.Compare("1", text) == 0 {
-			fetchLastNote()
+			fetchLastNotes()
+		}
+		if strings.Compare("2", text) == 0 {
+			fetchYesterdaysNotes()
 		}
 
 		if strings.Compare("q", text) == 0 {
@@ -31,7 +35,7 @@ func show_fetch_note_menu() {
 	fmt.Println(Info("Fetch a note:"))
 	fmt.Println("---------------------")
 	fmt.Println(Succ("(1)") + " Fetch last notes")
-	fmt.Println(Succ("(2)") + " Fetch second from last notes")
+	fmt.Println(Succ("(2)") + " Fetch yesterday's notes")
 	fmt.Println(Succ("(3)") + " Fetch notes from a specific date")
 	fmt.Println(Succ("(4)") + " Show all available notes")
 	fmt.Println(Succ("(q)") + " Back")
@@ -39,14 +43,9 @@ func show_fetch_note_menu() {
 }
 
 // Parse all notes in the logs directory and display the most recent one
-func fetchLastNote() {
-	fileInfo, err := ioutil.ReadDir(logPath())
-	check(err)
-
-	var files []string
-	for _, file := range fileInfo {
-		files = append(files, file.Name())
-	}
+// if it's available
+func fetchLastNotes() {
+	files := parseLogsDir()
 
 	if len(files) > 0 {
 		lastNote := files[0]
@@ -56,6 +55,33 @@ func fetchLastNote() {
 
 	fmt.Println("There are no available notes")
 	enterToContinue()
+}
+
+// Parse all notes in the logs directory and display the second most recent one
+// if it's available
+func fetchYesterdaysNotes() {
+	files := parseLogsDir()
+
+	if len(files) > 1 {
+		lastNote := files[1]
+		readNote(lastNote)
+		return
+	}
+
+	fmt.Println("There are no older notes")
+	enterToContinue()
+}
+
+func parseLogsDir() []string {
+	fileInfo, err := ioutil.ReadDir(logPath())
+	check(err)
+
+	var files []string
+	for _, file := range fileInfo {
+		files = append(files, file.Name())
+	}
+	sort.Sort(sort.Reverse(sort.StringSlice(files)))
+	return files
 }
 
 // read a specific note file from the logs folder
