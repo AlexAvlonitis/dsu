@@ -4,7 +4,6 @@ import (
 	"bufio"
 	"fmt"
 	"os"
-	"os/user"
 	"strings"
 	"time"
 )
@@ -19,12 +18,7 @@ func add_note(reader bufio.Reader) {
 		text := getInput(reader)
 
 		if strings.Compare("1", text) == 0 {
-			fmt.Print(Warn("[Add note +]-> "))
-			note := getInput(reader)
-
-			currentTime := time.Now()
-			formattedTime := currentTime.Format(layoutDate)
-			add(note, formattedTime)
+			add(reader)
 		}
 
 		if strings.Compare("q", text) == 0 {
@@ -46,11 +40,13 @@ func show_add_note_menu() {
 
 // Add a note, creates a filename with the given date as a name
 // and it is stored under the logs folder
-func add(note string, time string) {
-	usr, err := user.Current()
-	check(err)
+func add(reader bufio.Reader) {
+	fmt.Print(Warn("[Add note +]-> "))
+	note := getInput(reader)
 
-	filepath := fmt.Sprintf("%s/dsu_logs/%s", usr.HomeDir, time)
+	currentTime := time.Now()
+	time := currentTime.Format(layoutDate)
+	filepath := fmt.Sprintf(logPath() + "/" + time)
 	f, err := os.OpenFile(filepath, os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0600)
 	check(err)
 
