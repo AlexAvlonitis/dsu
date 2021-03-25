@@ -72,6 +72,7 @@ func fetchYesterdaysNotes() {
 	enterToContinue()
 }
 
+// parse logs and sort them by latest date first
 func parseLogsDir() []string {
 	fileInfo, err := ioutil.ReadDir(logPath())
 	check(err)
