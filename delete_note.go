@@ -32,7 +32,6 @@ func show_delete_note_menu() {
 	fmt.Println(Info("Delete a note:"))
 	fmt.Println("-----------------------------------")
 	fmt.Println(Succ("(1)") + " Delete all the notes for a day")
-	fmt.Println(Succ("(2)") + " Delete a line from a note")
 	fmt.Println(Succ("(q)") + " Back")
 	fmt.Println("-----------------------------------")
 }
