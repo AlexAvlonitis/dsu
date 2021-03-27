@@ -27,6 +27,9 @@ func main() {
 		if strings.Compare("2", text) == 0 {
 			fetch_note(*reader)
 		}
+		if strings.Compare("3", text) == 0 {
+			delete_note(*reader)
+		}
 
 		if strings.Compare("q", text) == 0 {
 			fmt.Println("Goodbye...")
