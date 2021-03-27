@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"os"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -40,29 +41,44 @@ func show_add_note_menu() {
 	fmt.Println("")
 	fmt.Println(Info("Add a note:"))
 	fmt.Println("---------------------")
-	fmt.Println(Succ("(1)") + " Add a note for today")
+	fmt.Println(Succ("(1)") + " Add today's notes")
 	fmt.Println(Succ("(2)") + " Add a note for another day")
 	fmt.Println(Succ("(q)") + " Back")
 	fmt.Println("---------------------")
 }
 
-// Add a note, creates a filename with the given date as a name
-// and it is stored under the logs folder
+// Add a note, creates a filename or appends if the file exists,
+// with a date param as a filename and stores it under the logs folder.
 func add(time string, reader bufio.Reader) {
 	fmt.Print(Warn("[Add note +]-> "))
 	note := getInput(reader)
 
+	// open/create the file
 	filepath := fmt.Sprintf(logPath() + "/" + time)
-	f, err := os.OpenFile(filepath, os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0600)
+	f, err := os.OpenFile(filepath, os.O_APPEND|os.O_RDWR|os.O_CREATE, 0600)
 	check(err)
-
 	defer f.Close()
 
-	_, err = f.WriteString("• " + note + "\n")
+	// get next number of line and write to file
+	nextNumber := LinesInFile(f) + 1
+	n := strconv.Itoa(nextNumber)
+	_, err = f.WriteString(n + ") " + note + "\n")
 	check(err)
 
 	f.Sync()
 	readNote(time)
+}
+
+// reads the number of lines of a file
+func LinesInFile(f *os.File) int {
+	scanner := bufio.NewScanner(f)
+	result := []string{}
+
+	for scanner.Scan() {
+		line := scanner.Text()
+		result = append(result, line)
+	}
+	return len(result)
 }
 
 // Create a folder that holds all the logs in the home directory
