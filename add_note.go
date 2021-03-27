@@ -25,14 +25,18 @@ func add_note(reader bufio.Reader) {
 		}
 
 		if strings.Compare("2", text) == 0 {
-			fmt.Print("Enter date (yy-mm-dd) ->")
+			fetchAllNotes()
+			fmt.Print(Warn("\nEnter date (yy-mm-dd) or (q) to quit -> "))
 			text := getInput(reader)
-			add(text, reader)
+			if text != "q" {
+				add(text, reader)
+			}
 		}
 
 		if strings.Compare("q", text) == 0 {
 			break
 		}
+		clearScreen()
 	}
 }
 
@@ -40,18 +44,21 @@ func add_note(reader bufio.Reader) {
 func show_add_note_menu() {
 	fmt.Println("")
 	fmt.Println(Info("Add a note:"))
-	fmt.Println("---------------------")
+	fmt.Println("------------------------------")
 	fmt.Println(Succ("(1)") + " Add today's notes")
 	fmt.Println(Succ("(2)") + " Add a note for another day")
 	fmt.Println(Succ("(q)") + " Back")
-	fmt.Println("---------------------")
+	fmt.Println("------------------------------")
 }
 
 // Add a note, creates a filename or appends if the file exists,
 // with a date param as a filename and stores it under the logs folder.
 func add(time string, reader bufio.Reader) {
-	fmt.Print(Warn("[Add note +]-> "))
+	fmt.Print(Warn("\n+ Type note or (q) to Quit -> "))
 	note := getInput(reader)
+	if note == "q" {
+		return
+	}
 
 	// open/create the file
 	filepath := fmt.Sprintf(logPath() + "/" + time)
@@ -67,6 +74,7 @@ func add(time string, reader bufio.Reader) {
 
 	f.Sync()
 	readNote(time)
+	enterToContinue()
 }
 
 // reads the number of lines of a file

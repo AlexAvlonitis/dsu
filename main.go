@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"os"
+	"os/exec"
 	"os/user"
 	"strings"
 )
@@ -22,12 +23,15 @@ func main() {
 		text := getInput(*reader)
 
 		if strings.Compare("1", text) == 0 {
+			clearScreen()
 			add_note(*reader)
 		}
 		if strings.Compare("2", text) == 0 {
+			clearScreen()
 			fetch_note(*reader)
 		}
 		if strings.Compare("3", text) == 0 {
+			clearScreen()
 			delete_note(*reader)
 		}
 
@@ -35,6 +39,7 @@ func main() {
 			fmt.Println("Goodbye...")
 			os.Exit(1)
 		}
+		clearScreen()
 	}
 }
 
@@ -43,9 +48,9 @@ func show_menu() {
 	fmt.Println("")
 	fmt.Println(Info("Daily Standup Notes:"))
 	fmt.Println("---------------------")
-	fmt.Println(Succ("(1)") + " Add a note")
-	fmt.Println(Succ("(2)") + " Fetch a note")
-	fmt.Println(Succ("(3)") + " Delete a note")
+	fmt.Println(Succ("(1)") + " Add notes")
+	fmt.Println(Succ("(2)") + " Fetch notes")
+	fmt.Println(Succ("(3)") + " Delete notes")
 	fmt.Println(Succ("(q)") + " Exit")
 	fmt.Println("---------------------")
 }
@@ -72,4 +77,11 @@ func getInput(reader bufio.Reader) string {
 	text, _ := reader.ReadString('\n')
 	// convert CRLF to LF
 	return strings.Replace(text, "\n", "", -1)
+}
+
+// Clear the terminal
+func clearScreen() {
+	cmd := exec.Command("clear") //Linux example, its tested
+	cmd.Stdout = os.Stdout
+	cmd.Run()
 }

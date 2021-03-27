@@ -3,7 +3,6 @@ package main
 import (
 	"bufio"
 	"fmt"
-	"log"
 	"os"
 	"strings"
 )
@@ -23,6 +22,7 @@ func delete_note(reader bufio.Reader) {
 		if strings.Compare("q", text) == 0 {
 			break
 		}
+		clearScreen()
 	}
 }
 
@@ -30,22 +30,27 @@ func delete_note(reader bufio.Reader) {
 func show_delete_note_menu() {
 	fmt.Println("")
 	fmt.Println(Info("Delete a note:"))
-	fmt.Println("---------------------")
+	fmt.Println("-----------------------------------")
 	fmt.Println(Succ("(1)") + " Delete all the notes for a day")
 	fmt.Println(Succ("(2)") + " Delete a line from a note")
 	fmt.Println(Succ("(q)") + " Back")
-	fmt.Println("---------------------")
+	fmt.Println("-----------------------------------")
 }
 
 // delete the file that stores the notes for the given date
 func delete(reader bufio.Reader) {
-	fmt.Print("Enter date to delete (yy-mm-dd) -> ")
+	fetchAllNotes()
+	fmt.Print(Warn("Enter date to delete (yy-mm-dd) or (q) for Quit -> "))
 	text := getInput(reader)
+	if text == "q" {
+		return
+	}
 
 	e := os.Remove(logPath() + "/" + text)
 	if e != nil {
-		log.Fatal(e)
+		fmt.Println(Fata("\nError, file does not exist"))
 	} else {
 		fmt.Println(Succ("\nNotes for " + text + " deleted"))
 	}
+	enterToContinue()
 }

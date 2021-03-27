@@ -20,9 +20,7 @@ func fetch_note(reader bufio.Reader) {
 			fetchLastNotes()
 		}
 		if strings.Compare("2", text) == 0 {
-			fmt.Print(Warn("Enter date (yy-mm-dd) -> "))
-			date := getInput(reader)
-			fetchNotesbyDate(date)
+			fetchNotesbyDate(reader)
 		}
 		if strings.Compare("3", text) == 0 {
 			fetchAllNotes()
@@ -31,6 +29,7 @@ func fetch_note(reader bufio.Reader) {
 		if strings.Compare("q", text) == 0 {
 			break
 		}
+		clearScreen()
 	}
 }
 
@@ -38,12 +37,12 @@ func fetch_note(reader bufio.Reader) {
 func show_fetch_note_menu() {
 	fmt.Println("")
 	fmt.Println(Info("Fetch a note:"))
-	fmt.Println("---------------------")
-	fmt.Println(Succ("(1)") + " Fetch last notes")
+	fmt.Println("--------------------------------------")
+	fmt.Println(Succ("(1)") + " Fetch last 2 notes")
 	fmt.Println(Succ("(2)") + " Fetch notes from a specific date")
 	fmt.Println(Succ("(3)") + " Show all available notes")
 	fmt.Println(Succ("(q)") + " Back")
-	fmt.Println("---------------------")
+	fmt.Println("--------------------------------------")
 }
 
 // Parse all notes in the logs directory and display the most recent one
@@ -69,7 +68,13 @@ func fetchLastNotes() {
 }
 
 // Parse all notes in the logs directory and display the one by date
-func fetchNotesbyDate(date string) {
+func fetchNotesbyDate(reader bufio.Reader) {
+	fetchAllNotes()
+	fmt.Print(Warn("\nEnter date (yy-mm-dd) or (q) to quit -> "))
+	date := getInput(reader)
+	if date == "q" {
+		return
+	}
 	filesSet, _ := parseLogsDir()
 
 	var note string
@@ -89,7 +94,7 @@ func fetchAllNotes() {
 	_, files := parseLogsDir()
 
 	if len(files) > 0 {
-		fmt.Println(Teal("\n=== Files ===\n"))
+		fmt.Println(Teal("\n--=== Notes ===--\n"))
 		for _, fileName := range files {
 			fmt.Println(Teal(fileName))
 		}
@@ -127,5 +132,6 @@ func readNote(noteName string) {
 	content, err := ioutil.ReadFile(logPath() + "/" + noteName)
 	check(err)
 
-	fmt.Printf(Teal("\nFile contents [%s]:\n \n%s"), noteName, content)
+	fmt.Println(Succ("\nFile stored at: ") + logPath() + "/" + noteName)
+	fmt.Printf(Teal("File contents [%s]:\n \n%s"), noteName, content)
 }
