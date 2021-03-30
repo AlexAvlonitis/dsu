@@ -10,10 +10,8 @@ Daily standup notes in terminal. A simple Golang tool for Unix based systems, to
 git clone https://github.com/alexavlonitis/dsu
 
 cd dsu
-cp dsu $HOME/bin
-
-# optional - build the binary file from scratch
 go build -o dsu *.go
+cp dsu $HOME/bin
 ```
 
 ### Considerations
